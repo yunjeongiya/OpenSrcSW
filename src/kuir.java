@@ -20,15 +20,23 @@ public class kuir {
         String path = args[1];
 
         if (mode.equals("-c")) {
+            checkDir();
             makeCollection makeCollection = new makeCollection();
             Document res = makeCollection.makeXml(path);
             writeDocToFile(res, "../result/collection.xml");
         }
         else if (mode.equals("-k")) {
+            checkDir();
             makeKeyword keywordParser = new makeKeyword();
             Document converted = keywordParser.makeXml(path);
             writeDocToFile(converted, "../result/index.xml");
         }
+    }
+
+    private static void checkDir(){
+        File dir = new File("../result");
+        if(!dir.exists())
+            dir.mkdir();
     }
 
     private static void writeDocToFile(Document doc, String dir) {
