@@ -12,6 +12,7 @@ public class kuir {
     public static void main(String[] args) {
 
         if (args.length < 2) {
+
             System.out.println("Not enough arguments");
             return;
         }
@@ -26,13 +27,16 @@ public class kuir {
             writeDocToFile(res, "../result/collection.xml");
         }
         else if (mode.equals("-k")) {
-            checkDir();
             makeKeyword keywordParser = new makeKeyword();
             Document converted = keywordParser.makeXml(path);
             writeDocToFile(converted, "../result/index.xml");
         }
+        else if (mode.equals("-i")) {
+            indexer indexer = new indexer();
+            indexer.save(indexer.indexXML(path), "../result/index.post");
+            indexer.readAndPrint("../result/index.post");
+        }
     }
-
     private static void checkDir(){
         File dir = new File("../result");
         if(!dir.exists())
