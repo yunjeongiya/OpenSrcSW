@@ -33,7 +33,7 @@ public class indexer {
             doc = docBuilder.parse(new File(path));
             NodeList bodyList = doc.getElementsByTagName("body");
             int n = bodyList.getLength();
-            for (int i = 0; i < bodyList.getLength(); i++) {
+            for (int i = 0; i < n; i++) {
                 Node node = bodyList.item(i);
                 String text = node.getTextContent();
                 String[] words = text.split("#");
@@ -76,8 +76,7 @@ public class indexer {
         }
     }
 
-    static class Pair implements Serializable {
-
+    static class Pair implements Serializable, Comparable<Pair> {
         public double val;
 
         public String postId;
@@ -87,6 +86,11 @@ public class indexer {
             this.postId = postId;
 
             this.val = val;
+        }
+
+        @Override
+        public int compareTo(Pair pair) {
+            return Double.compare(pair.val, this.val);
         }
 
         @Override
