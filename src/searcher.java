@@ -3,9 +3,11 @@ import org.snu.ids.kkma.index.Keyword;
 import org.snu.ids.kkma.index.KeywordExtractor;
 import org.snu.ids.kkma.index.KeywordList;
 import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import javax.lang.model.util.Elements;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -61,15 +63,22 @@ public class searcher {
     public void printResult(PriorityQueue<indexer.Pair> similarity, String POSTPath) throws ParserConfigurationException, IOException, SAXException {
         DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
-        Document doc = docBuilder.parse(new File(POSTPath.replace("index.post", "collection.xml")));
+        Document docs = docBuilder.parse(new File(POSTPath.replace("index.post", "collection.xml")));
 
         for(int i=0; i<3 && !similarity.isEmpty(); i++){
 
-            String title = new String(String.valueOf(doc.getElementsByTagName("title")));
-
             indexer.Pair pair = similarity.poll();
 
-            System.out.println("title: " + (pair.postId)/* title */ + ", result :"  + String.format("%.2f", pair.val));
+            NodeList doc = docs.getElementsByTagName("doc");
+
+            for(int j=0;j<doc.getLength();j++) {
+                Node node = doc.item(j);
+                if (node.getAttributes().getNamedItem("id").getNodeValue().equals(pair.postId)) {
+                    String title = node.getFirstChild().getTextContent();
+                    System.out.println("title: " + title + ", result :" + String.format("%.2f", pair.val));
+                    break;
+                }
+            }
         }
     }
 }
