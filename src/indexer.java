@@ -90,7 +90,10 @@ public class indexer {
 
         @Override
         public int compareTo(Pair pair) {
-            return Double.compare(pair.val, this.val);
+            int flag = Double.compare(pair.val, this.val);
+            if (flag==0)
+                return this.postId.compareTo(pair.postId);
+            return flag;
         }
 
         @Override
