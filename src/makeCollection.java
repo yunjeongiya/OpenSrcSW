@@ -72,9 +72,8 @@ public class makeCollection {
     }
 
     public static class TitleParser {
-        public String parse (org.jsoup.nodes.Document doc) throws Exception{
+        public String parse(org.jsoup.nodes.Document doc) throws Exception{
             Elements foodDic = doc.select("title");
-
             return foodDic.text();
         }
     }
