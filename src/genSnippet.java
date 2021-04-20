@@ -27,12 +27,10 @@ public class genSnippet {
 
             FileInputStream fileInputStream = new FileInputStream(path);
 
-            //파일스트림에서 들어오는 단어들을 엔터 단위로 잘라 동적배열에 저장
+            //파일스트림에서 들어오는 단어들을 엔터 단위로 잘라 리스트로 저장
 
             String key;
             while(key != null)
-
-             = fileInputStream
 
             DocumentBuilder
             List lineList = new List();
