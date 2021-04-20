@@ -18,11 +18,6 @@ import java.util.List;
 import java.util.PriorityQueue;
 
 public class searcher {
-    public PriorityQueue<indexer.Pair> CalcCosSim(String query, HashMap<String, List<indexer.Pair>> indexPOST) {
-        PriorityQueue cosSim = new PriorityQueue();
-
-        return cosSim;
-    }
     public HashMap<String, List<indexer.Pair>> getPOST (String POSTPath) throws IOException, ClassNotFoundException {
         FileInputStream fileInputStream = new FileInputStream(POSTPath);
         ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
@@ -31,36 +26,76 @@ public class searcher {
         return (HashMap) object;
     }
 
-    public PriorityQueue<indexer.Pair> InnerProduct(String query, HashMap<String, List<indexer.Pair>> indexPOST) throws IOException, ClassNotFoundException {
-
+    public HashMap<String, Double> getQueryMap (String query){
         KeywordExtractor ke = new KeywordExtractor();
         KeywordList kl = ke.extractKeyword(query, true);
-        HashMap<String, Double> querymap = new HashMap<>();
+        HashMap<String, Double> queryMap = new HashMap<>();
         for (int i=0; i<kl.size(); i++){
             Keyword kwrd = kl.get(i);
-            querymap.put(kwrd.getString(), 1.0);
+            queryMap.put(kwrd.getString(), 1.0);
         }
-        PriorityQueue<indexer.Pair> pq = new PriorityQueue();
+        return queryMap;
+    }
+
+    public HashMap<String, Double> InnerProduct(HashMap<String, Double> queryMap, HashMap<String, List<indexer.Pair>> indexPOST) throws IOException, ClassNotFoundException {
         HashMap<String, Double> map  =  new HashMap<>();
-        for (String key : querymap.keySet()) {
+        for (String key : queryMap.keySet()) {
             if (!indexPOST.containsKey(key))
                 continue;
-            double queryWeight = querymap.get(key);
+            double queryWeight = queryMap.get(key);
             List<indexer.Pair> pairList = indexPOST.get(key);
             for (indexer.Pair pair : pairList) {
                 String postId = pair.postId;
-                double val = pair.val;
+                double docWeight = pair.val;
                 if (!map.containsKey(postId))
                     map.put(postId, 0.0);
-                map.put(postId, map.get(postId) + val * queryWeight);
+                map.put(postId, map.get(postId) + docWeight * queryWeight);
             }
         }
-        for (String key : map.keySet())
+        return map;
+    }
+
+    public PriorityQueue<indexer.Pair> CalcSim(HashMap<String, Double> queryMap, HashMap<String, List<indexer.Pair>> indexPOST) {
+
+        PriorityQueue<indexer.Pair> pq = new PriorityQueue();
+
+        Double querySize = 0.0;
+        for (String key : queryMap.keySet())
+            querySize += Math.pow(queryMap.get(key), 2);
+        querySize = Math.pow(querySize, 0.5);
+
+        HashMap<String, Double> map  =  new HashMap<>();
+        try {
+            map = InnerProduct(queryMap, indexPOST);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        HashMap<String, Double> docSize  =  new HashMap<>();
+        for (String key : queryMap.keySet()) {
+            List<indexer.Pair> pairList = indexPOST.get(key);
+            for (indexer.Pair pair : pairList) {
+                String postId = pair.postId;
+                double docWeight = pair.val;
+                if (!docSize.containsKey(postId))
+                    docSize.put(postId, 0.0);
+                docSize.put(postId, docSize.get(postId) + Math.pow(docWeight,2));
+            }
+        }
+
+        for (String key : map.keySet()) {
+            docSize.put(key, Math.pow(docSize.get(key), 0.5));
+            map.put(key, map.get(key) / (querySize * docSize.get(key)));
             pq.add(new indexer.Pair(key, map.get(key)));
+        }
+
         return pq;
     }
 
     public void printResult(PriorityQueue<indexer.Pair> similarity, String POSTPath) throws ParserConfigurationException, IOException, SAXException {
+
         DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
         Document docs = docBuilder.parse(new File(POSTPath.replace("index.post", "collection.xml")));
@@ -68,8 +103,8 @@ public class searcher {
         for(int i=0; i<3 && !similarity.isEmpty(); i++){
 
             indexer.Pair pair = similarity.poll();
-
             NodeList doc = docs.getElementsByTagName("doc");
+            int n =  doc.getLength();
 
             for(int j=0;j<doc.getLength();j++) {
                 Node node = doc.item(j);

@@ -10,6 +10,7 @@ import javax.xml.transform.stream.StreamResult;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.HashMap;
 
 public class kuir {
     public static void main(String[] args) throws IOException, ClassNotFoundException, ParserConfigurationException, SAXException {
@@ -43,7 +44,8 @@ public class kuir {
             if (args[2].equals("-q")) {
                 String query = args[3];
                 searcher searcher = new searcher();
-                searcher.printResult(searcher.CalcSim(query, searcher.getPOST(path)), path);
+                HashMap<String, Double> queryMap = searcher.getQueryMap(query);
+                searcher.printResult(searcher.CalcSim(queryMap, searcher.getPOST(path)), path);
             }
         }
     }
