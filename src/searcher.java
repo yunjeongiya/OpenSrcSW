@@ -31,7 +31,7 @@ public class searcher {
         return (HashMap) object;
     }
 
-    public PriorityQueue<indexer.Pair> CalcSim(String query, HashMap<String, List<indexer.Pair>> indexPOST) throws IOException, ClassNotFoundException {
+    public PriorityQueue<indexer.Pair> InnerProduct(String query, HashMap<String, List<indexer.Pair>> indexPOST) throws IOException, ClassNotFoundException {
 
         KeywordExtractor ke = new KeywordExtractor();
         KeywordList kl = ke.extractKeyword(query, true);
