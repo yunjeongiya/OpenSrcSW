@@ -1,4 +1,3 @@
-import org.jsoup.Jsoup;
 import org.snu.ids.kkma.index.Keyword;
 import org.snu.ids.kkma.index.KeywordExtractor;
 import org.snu.ids.kkma.index.KeywordList;
@@ -7,7 +6,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import javax.lang.model.util.Elements;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -15,8 +13,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.PriorityQueue;
@@ -31,7 +27,7 @@ public class searcher {
         return (HashMap) object;
     }
 
-    public PriorityQueue<indexer.Pair> CalcSim(String query, HashMap<String, List<indexer.Pair>> indexPOST) throws IOException, ClassNotFoundException {
+    public PriorityQueue<indexer.Pair> InnerProduct(String query, HashMap<String, List<indexer.Pair>> indexPOST) throws IOException, ClassNotFoundException {
 
         KeywordExtractor ke = new KeywordExtractor();
         KeywordList kl = ke.extractKeyword(query, true);
