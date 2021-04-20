@@ -32,14 +32,13 @@ public class genSnippet {
             String key;
             while(key != null)
 
-            DocumentBuilder
             List lineList = new List();
-
-            //파일의 텍스트들을 항목으로 갖는 이차원배열 만들기
 
             if (mode2.equals("-q")){
 
-                //쿼리에서 텍스트들을 항목으로 갖는 배열 만들기
+                //쿼리에서 텍스트들을 항목으로 갖는 리스트로 저장
+
+                //파일 전체 리스트 순회해 쿼리리스트랑 비교
 
                 //찾아서 출력하기
                 System.out.println(matchLine);
