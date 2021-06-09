@@ -1,0 +1,4 @@
+# Package Files #
+*.csv
+*.xls
+.ipynb_checkpoints/
