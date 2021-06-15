@@ -2,7 +2,6 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -14,9 +13,7 @@ import java.util.Map;
 import java.util.Scanner;
 
 public class MovieAPI {
-
     public static void main(String[] args) throws ParseException, FileNotFoundException {
-
         FileInputStream fileInputStream = new FileInputStream(".\\out\\production\\Open API\\clientKey");
         Scanner fsc = new Scanner(fileInputStream, StandardCharsets.UTF_8);
         String clientId = fsc.nextLine(); //애플리케이션 클라이언트 아이디값
@@ -32,17 +29,14 @@ public class MovieAPI {
             throw new RuntimeException("검색어 인코딩 실패",e);
         }
 
-        String apiURL = "https://openapi.naver.com/v1/search/movie?query=" + text;    // json 결과
-        //String apiURL = "https://openapi.naver.com/v1/search/movie.xml?query="+ text; // xml 결과
+        String apiURL = "https://openapi.naver.com/v1/search/movie?query=" + text;
 
         Map<String, String> requestHeaders = new HashMap<>();
         requestHeaders.put("X-Naver-Client-Id", clientId);
         requestHeaders.put("X-Naver-Client-Secret", clientSecret);
         String responseBody = get(apiURL,requestHeaders);
 
-        //System.out.println(responseBody);
         printJSON(responseBody);
-
     }
 
     private static void printJSON(String result) throws ParseException {
